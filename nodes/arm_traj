@@ -7,16 +7,49 @@ Publisher:
 
 """
 import rospy
+from math import sin, cos, sqrt, pi
+from sensor_msgs.msg import JointState
 
 
+theta1 = 0
+theta2 = 0
+freq = 10
+total_time = rospy.get_param("/T")
+L1 = rospy.get_param("/L1")
+L2 = rospy.get_param("/L2")
 
-theta1 = 0;
-theta2 = 0;
+
+def xy_coordinates(time, L1, L2, total_time):
+    h = 2/3*(L1+L2)
+    x = 0.9*cos(2*pi*time/total_time)*sqrt((L1+L2)**2-h**2)
+    y = h
+    return x, y;
+
 
 def main():
     rospy.init_node('arm_traj')
     rospy.logerr("Check")
 
+    hz = rospy.Rate(freq)
+    time = 0
+    rostime = rospy.Time.now()
 
+    
+
+    while not rospy.is_shutdown():
+        
+        x_coor, y_coor = xy_coordinates(time, L1, L2, total_time)
+        rospy.loginfo(f"info message: Time {time}, {x_coor}, {y_coor}")
+        time += 1/freq; 
+
+        joint_state_publisher = rospy.Publisher("joint_states", JointState, queue_size=10)
+        joint_state = JointState()
+        joint_state.header.stamp = rospy.Time.now()
+        joint_state.name = ['base_jt', 'base_to_child_jt']
+        joint_state.position = [0, 0]
+        joint_state_publisher.publish(joint_state)
+
+        hz.sleep()
+            
 if __name__ == "__main__":
     main()

@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+""" This Node Publishes coordinates for arm
+
+Publisher:
+    xyz 
+
+"""
+import rospy
+
+
+
+theta1 = 0;
+theta2 = 0;
+
+def main():
+    rospy.init_node('arm_traj')
+    rospy.logerr("Check")
+
+
+if __name__ == "__main__":
+    main()

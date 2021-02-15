@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<robot name="mihiARM" xmlns:xacro="homework2">
+
+    <!--Load arm constants (length and radius of links) from config/arm.yaml-->
+    <xacro:property name="yaml_file" value="$(find homework2)/config/arm.yaml"/>
+    <xacro:property name="arm_properties" value="${load_yaml(yaml_file)}"/>
+
+    <!--Constants-->
+    <xacro:property name="cylinder_radius" value="${arm_properties['R']}" />
+    <xacro:property name="baselink" value="${arm_properties['L1']}" />
+    <xacro:property name="childlink" value="${arm_properties['L2']}" />
+  
+    <!--Material Definations-->
+    <material name="Yellow">
+        <color rgba="0.8 0.8 0.0 0.8"/>
+    </material>    
+
+    <material name="Green">
+        <color rgba="0.0 1.0 0.0 0.8"/> 
+    </material>
+
+
+    <!--Link Definations-->
+
+    <!--Note: Links below are oriented in X Direction. i.e. for theta1=theta2=0, base_link and child_link align with x axis-->
+
+    <link name="robot_base">
+        <!--Fixed Virtual Base Link with no attributes-->        
+    </link>
+    
+    <link name="base_link">
+        <!--Base link with 0.02m radius and 0.6m length (imported from rosparam)-->
+        <visual>
+        <geometry>
+            <cylinder length="${baselink}" radius="${cylinder_radius}"/>
+        </geometry>
+        <origin xyz="${baselink/2} 0.0 0.0" rpy="0.0 ${pi/2} 0.0"/>
+        <material name="Yellow"/>
+        </visual>
+    </link>
+
+    <link name="child_link">
+        <!--child link with 0.02m radius and 0.5m length (imported from rosparam)-->
+        <visual>
+        <geometry>
+            <cylinder length="${childlink}" radius="${cylinder_radius}"/>
+        </geometry>
+        <origin xyz="${childlink/2} 0.0 0.0" rpy="0.0 ${pi/2} 0.0"/>
+        <material name="Green"/>
+        </visual>
+    </link>
+
+    <link name="end_effector">
+        <!--Fixed Virtual End Effector Link with no attributes--> 
+    </link>
+
+    <!--Joints-->
+    <joint name="base_jt" type="continuous">
+        <!--Continuous Joint connecting fix virtual robot_base link with base link-->
+        <parent link="robot_base"/>
+        <child link="base_link"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+    
+    <joint name="base_to_child_jt" type="revolute">
+        <!--Revolute Joint connecting base_link and cild_link with specified limit range and velocity-->
+        <parent link="base_link"/>
+        <child link="child_link"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="${-pi}" upper="${pi}" velocity="5.0" effort="1000.0"/>
+        <origin xyz="${baselink} 0.0 0.0"/>
+    </joint>
+
+    <joint name="end_effector_jt" type="fixed">
+    <!--Fixed Joint connecting child_link with fix end_effector link-->
+        <parent link="child_link"/>
+        <child link="end_effector"/>
+        <origin xyz="${childlink} 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+</robot>

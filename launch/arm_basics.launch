@@ -1,0 +1,20 @@
+<launch>
+
+  <!--args-->
+  <arg name="model" default="$(find homework2)/urdf/arm.urdf.xacro"/>
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find homework2)/rviz/arm.rviz" />
+
+  <!-- Load URDF to parameter: robot_description at ROS Parameter Server-->
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+  <!--load arm constants to ROS Parameter Server for nodes (arm.yaml is loaded seperately in arm.urdf.xacro for RVIZ)-->
+  <rosparam command="load" file="$(find homework2)/config/arm.yaml" />
+
+  <!--nodes-->
+  <node if="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+  <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>

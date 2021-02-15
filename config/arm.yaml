@@ -1,0 +1,3 @@
+L1 : 0.6 #length of parent link in meter
+L2 : 0.5 #length of child in meter
+R  : 0.02 #radius of links in meter

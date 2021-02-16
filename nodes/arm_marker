@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+"""This node Publish markers to RVIZ
+
+"""
+import rospy
+
+#Define frequency rate
+freq = 10
+
+
+def main():
+    #initialize node
+    rospy.init_node('arm_traj')
+    #logerr msg to check if node is running
+    rospy.logerr("This is just a check for arm_marker node, ignore me")
+    #define ros frequency
+    hz = rospy.Rate(freq)
+    #initialize time
+
+    while not rospy.is_shutdown():
+
+        rospy.loginfo("Test")
+
+        hz.sleep()
+
+if __name__ == "__main__":
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass

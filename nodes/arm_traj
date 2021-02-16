@@ -10,10 +10,11 @@ import rospy
 from math import sin, cos, sqrt, pi, acos, asin, atan2
 from sensor_msgs.msg import JointState
 from homework2.armmath import xy_coordinates, joint_angles
+from geometry_msgs.msg import Point
 
 #Initialize theta with 0
-theta1 = 0
-theta2 = 0
+theta1 = None
+theta2 = None
 #Define frequency rate
 freq = rospy.get_param("/F")
 #Import Constants from rosparam
@@ -41,6 +42,10 @@ def main():
         #log theta1, theta2, time, x_coor, and y_coor to terminal
         rospy.loginfo(f"info message: Time {time}, Theta1:{theta1}, Theta2:{theta2}, x:{x_coor}, y:{y_coor}")
         
+        #init Point_publisher and publish x and y coordinates
+        point_publisher = rospy.Publisher("point", Point, queue_size=10)
+        point_publisher.publish(Point(x_coor,y_coor,0))
+
         #Init joint_state_publisher        
         joint_state_publisher = rospy.Publisher("joint_states", JointState, queue_size=10)
         joint_state = JointState()

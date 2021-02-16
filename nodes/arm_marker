@@ -3,23 +3,70 @@
 
 """
 import rospy
-
+from visualization_msgs.msg import Marker    
+from geometry_msgs.msg import Point
+from numpy import sign
+from numpy.random import randint, random
 #Define frequency rate
 freq = 10
+#Import Constants from rosparam
+total_time = rospy.get_param("/T")
 
-
+x_coor = 0
+y_coor = 0
+def callback(data):
+    global x_coor, y_coor
+    x_coor = data.x
+    y_coor = data.y
+#type 0 -11
 def main():
     #initialize node
-    rospy.init_node('arm_traj')
+    rospy.init_node('arm_marker')
     #logerr msg to check if node is running
     rospy.logerr("This is just a check for arm_marker node, ignore me")
     #define ros frequency
     hz = rospy.Rate(freq)
     #initialize time
-
+    marker_pub = rospy.Publisher("visualization_marker", Marker, queue_size=10)
+    marker = Marker()
+    marker.header.stamp=rospy.Time.now()
+    marker.header.frame_id= 'robot_base'
+    prev_coor_sign = -1
     while not rospy.is_shutdown():
+        
+        rospy.Subscriber("point", Point, callback)
+        
+        if x_coor>=0:
+            marker.type=1
+        else:
+            marker.type=2
+        new_coor_sign = sign(x_coor)
 
-        rospy.loginfo("Test")
+        if new_coor_sign != prev_coor_sign:
+            #marker.type = randint(1,3)
+            prev_coor_sign = new_coor_sign
+            marker.color.r=random(1)[0]
+            marker.color.g=random(1)[0]
+            marker.color.b=random(1)[0]
+    
+        marker.id+=1
+        marker.pose.position.x=x_coor
+        marker.pose.position.y=y_coor
+        marker.pose.position.z=0
+        marker.pose.orientation.x=0
+        marker.pose.orientation.y=0
+        marker.pose.orientation.z=0
+        marker.pose.orientation.w=1
+        marker.scale.x=0.03
+        marker.scale.y=0.03
+        marker.scale.z=0.03
+        
+        marker.color.a=0.8
+        marker.lifetime.secs=2
+        #add new marker
+        
+        marker_pub.publish(marker)
+        rospy.loginfo(f"coordinates x:{new_coor_sign} y:{marker.type}")
 
         hz.sleep()
 
@@ -27,4 +74,4 @@ if __name__ == "__main__":
     try:
         main()
     except rospy.ROSInterruptException:
-        pass
+        pass 

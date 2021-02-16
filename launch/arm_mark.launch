@@ -4,5 +4,5 @@
 
   <!--Nodes-->
   <node name="arm_traj" pkg="homework2" type="arm_traj"/>
-
+  <node name="arm_marker" pkg="homework2" type="arm_marker"/>
 </launch>

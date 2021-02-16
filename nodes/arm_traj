@@ -1,21 +1,19 @@
 #!/usr/bin/env python
 
-""" This Node Publishes coordinates for 2 link arm to joint_states
+""" This Node Publishes coordinates for arm
 
 Publisher:
     xyz 
 
 """
 import rospy
-from math import sin, cos, sqrt, pi, acos, asin, atan2
+from math import sin, cos, sqrt, pi
 from sensor_msgs.msg import JointState
 
-#Initialize theta with 0
+
 theta1 = 0
 theta2 = 0
-#Define frequency rate
 freq = 10
-#Import Constants from rosparam
 total_time = rospy.get_param("/T")
 L1 = rospy.get_param("/L1")
 L2 = rospy.get_param("/L2")
@@ -25,53 +23,33 @@ def xy_coordinates(time, L1, L2, total_time):
     h = 2/3*(L1+L2)
     x = 0.9*cos(2*pi*time/total_time)*sqrt((L1+L2)**2-h**2)
     y = h
-    return x, y
+    return x, y;
 
-def joint_angles(x,y,L1,L2):
-    alpha = acos((x**2+y**2+L1**2-L2**2)/2*L1*sqrt(x**2+y**2))
-    beta = acos((L1**2 + L2**2 - x**2 - y**2)/2*L1*L2)
-    gamma = atan2(y,x)
-    theta1 = gamma - alpha
-    theta2 = pi - beta
-    return theta1, theta2
 
 def main():
-    #initialize node
     rospy.init_node('arm_traj')
-    #logerr msg to check if node is running
-    rospy.logerr("This is just a check for arm_traj node, ignore me")
-    #define ros frequency
-    hz = rospy.Rate(freq)
-    #initialize time
-    time = 0
+    rospy.logerr("Check")
 
-    #main loop
+    hz = rospy.Rate(freq)
+    time = 0
+    rostime = rospy.Time.now()
+
+    
+
     while not rospy.is_shutdown():
         
-        #calculate x and y coordinate of end effector
         x_coor, y_coor = xy_coordinates(time, L1, L2, total_time)
-        #use calculated x and y  to find theta1 and theta2 of arm links
-        theta1, theta2 = joint_angles(x_coor, y_coor,L1,L2)
-        #log theta1, theta2, time, x_coor, and y_coor to terminal
-        rospy.loginfo(f"info message: Time {time}, Theta1:{theta1}, Theta2:{theta2}, x:{x_coor}, y:{y_coor}")
-        
-        #Init joint_state_publisher        
+        rospy.loginfo(f"info message: Time {time}, {x_coor}, {y_coor}")
+        time += 1/freq; 
+
         joint_state_publisher = rospy.Publisher("joint_states", JointState, queue_size=10)
         joint_state = JointState()
-        #joint_state_publisher requires header stamp: current ros time
         joint_state.header.stamp = rospy.Time.now()
-        #add name of links in order from parent to child
         joint_state.name = ['base_jt', 'base_to_child_jt']
-        #publish theta1 and theta2 to joint_states
-        joint_state.position = [theta1, theta2]
+        joint_state.position = [0, 0]
         joint_state_publisher.publish(joint_state)
 
-        #update time and sleep
-        time += 1/freq
         hz.sleep()
             
 if __name__ == "__main__":
-    try:
-        main()
-    except rospy.ROSInterruptException:
-        pass
+    main()

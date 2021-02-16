@@ -1,8 +1,8 @@
 <launch>
-  
+
   <!--args-->
   <arg name="model" default="$(find homework2)/urdf/arm.urdf.xacro"/>
-  <arg name="gui" default="false" />
+  <arg name="gui" default="true" />
   <arg name="rvizconfig" default="$(find homework2)/rviz/arm.rviz" />
 
   <!-- Load URDF to parameter: robot_description at ROS Parameter Server-->
@@ -13,8 +13,8 @@
 
   <!--nodes-->
   <node if="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+  <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
-  <!-- Commented because node arm_traj is publishing to joint_state_publisher, uncomment if node arm_traj is not running-->
-  <!--<node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />-->
+
 </launch>

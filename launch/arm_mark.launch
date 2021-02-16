@@ -1,6 +1,8 @@
 <launch>
+  <!--Include arm_basics.launch: launches RVIZ, robot state publisher, loads URDF, and arm.yaml -->
   <include file="$(find homework2)/launch/arm_basics.launch"/>
 
+  <!--Nodes-->
   <node name="arm_traj" pkg="homework2" type="arm_traj"/>
 
 </launch>

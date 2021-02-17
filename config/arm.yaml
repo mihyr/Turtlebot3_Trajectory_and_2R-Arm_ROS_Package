@@ -1,5 +1,6 @@
+#Note: This parameters are meant for arm_traj and arm_mark node
 L1 : 0.8  #length of parent link in meter
-L2 : 0.5  #length of child in meter
+L2 : 0.6  #length of child in meter
 R  : 0.02 #radius of links in meter
 T  : 10   #time to complete a loop
 F  : 10   #frequency

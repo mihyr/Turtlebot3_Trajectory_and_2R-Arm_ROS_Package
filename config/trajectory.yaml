@@ -1,0 +1,5 @@
+#Note: This parameters are meant for trajectory node
+H : 0.8  #Height of Figure 8 trajectory
+W : 1.0  #Width of Figure 8 trajectory
+Ti  : 15 #Time to complete a loop
+Fr  : 300   #frequency

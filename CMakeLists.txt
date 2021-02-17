@@ -162,6 +162,7 @@ include_directories(
 catkin_install_python(PROGRAMS
   nodes/arm_marker
   nodes/arm_traj
+  nodes/trajectory
   src/${PROJECT_NAME}/armmath.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

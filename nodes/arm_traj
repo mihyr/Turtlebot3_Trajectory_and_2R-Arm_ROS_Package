@@ -15,12 +15,13 @@ from geometry_msgs.msg import Point
 #Initialize theta with 0
 theta1 = None
 theta2 = None
-#Define frequency rate
-freq = rospy.get_param("/F")
+
 #Import Constants from rosparam
 total_time = rospy.get_param("/T")
 L1 = rospy.get_param("/L1")
 L2 = rospy.get_param("/L2")
+#Define frequency rate
+freq = rospy.get_param("/F")
 
 def main():
     #initialize node

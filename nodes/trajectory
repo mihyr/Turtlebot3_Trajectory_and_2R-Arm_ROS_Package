@@ -1,0 +1,98 @@
+#!/usr/bin/env python
+"""This node Publish
+
+"""
+import rospy
+from math import sin, cos, pi, atan2
+from nav_msgs.msg import Path
+from geometry_msgs.msg import Point, Quaternion, PoseStamped, Pose, Vector3
+from geometry_msgs.msg import Twist
+from numpy import arctan, sqrt
+
+
+#Import Constants from rosparam
+H = rospy.get_param("/H")
+W = rospy.get_param("/W")
+T = rospy.get_param("/Ti")
+#Define frequency rate
+freq = rospy.get_param("/Fr")
+
+
+def traj_coordinates(h,w,current_time,total_time):
+    x = (w/2)*sin(2*pi*current_time/total_time)
+    y = (h/2)*sin(4*pi*current_time/total_time)
+    return x,y
+
+def xy_derivatives(x,y,h,w,t,T):
+    x_dot = w*pi*cos(2*pi*t/T)/T
+    y_dot = 2*h*pi*cos(4*pi*t/T)/T
+
+    x_dd = -2*(pi**2)*w*sin(2*pi*t/T)/(T**2)
+    y_dd = -8*(pi**2)*h*sin(4*pi*t/T)/(T**2) 
+    
+    velocity = sqrt(x_dot**2 + y_dot**2)
+    omega = ((y_dd*x_dot)-(y_dot*x_dd))/((x_dot**2+y_dot**2))
+    #omega=atan2(y_dot,x_dot)
+    return velocity, omega
+
+def main():
+    #initialize node
+    rospy.init_node('trajectory')
+    #logerr msg to check if node is running
+    rospy.logerr("This is just a check for trajectory node, ignore me")
+    #define ros frequencys
+    hz = rospy.Rate(freq)
+    #initialize time
+    time = 0
+
+
+    #init Path publisher
+    path_publisher = rospy.Publisher("turtle_path", Path, queue_size=10)
+    path=Path()
+    path.poses = []
+
+    #init Point_publisher and publish x and y coordinates
+    point_publisher = rospy.Publisher("turtle_point", Point, queue_size=10)
+    
+    #init cmd_vel
+    vel_publisher = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+    velocity=Twist()    
+
+    #iteration loop
+    while not rospy.is_shutdown():
+
+
+        x_coor, y_coor = traj_coordinates(H,W,time,T)
+        v_linear, v_angular = xy_derivatives(x_coor,y_coor,H,W,time,T)
+        rospy.loginfo(f"info message: Time {time}, x:{v_linear}, y:{v_angular}")
+        #cmd_vel loop
+        velocity.linear = Vector3(v_linear,0,0)
+        velocity.angular = Vector3(0,0,v_angular)
+        vel_publisher.publish(velocity)
+        #point loop
+        point_publisher.publish(Point(x_coor,y_coor,1))
+
+        #Path loop
+        path.header.seq = 1
+        path.header.stamp = rospy.Time.now()
+        path.header.frame_id = "world"
+        path.poses.append(PoseStamped(header = path.header, 
+                                        pose = Pose(position = Point(x_coor,y_coor,0), orientation = Quaternion(0,0,0,1))))
+        path_publisher.publish(path)
+        if len(path.poses)>=20:
+            path.poses.pop(0)
+        
+        
+
+        #cmd_vel loop
+        #update time and sleep
+        time += 1/freq
+        hz.sleep()
+
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass 

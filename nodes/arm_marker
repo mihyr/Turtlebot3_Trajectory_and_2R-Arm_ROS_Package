@@ -1,7 +1,23 @@
 #!/usr/bin/env python
-"""This node Publish markers to RVIZ
+"""
+
+**Info**: This *arm_marker* node publishes marker trajectory of 2R ARM for visualization in RVIZ
+
+**Publishers**:
+    visualization_marker - publish marker of different shape and color based on their current location
+                            (shape and color changes when x coordinate sign alters. Color change is set to random)
+
+**Subscriber:
+    point - Subscribe to points topic (x,y coordinate data) published by arm_traj node
+
+**Parameters**:
+    total_time = Time required to complete one loop of trajectory
+    Pub_Frequency - ROS Publishing freq Rate
+    
+**Note**:
 
 """
+
 import rospy
 from visualization_msgs.msg import Marker    
 from geometry_msgs.msg import Point, Pose, Point, Quaternion, Vector3
@@ -14,66 +30,68 @@ freq = rospy.get_param("/F")
 #Import Constants from rosparam
 total_time = rospy.get_param("/T")
 
+#initialize global variables
 x_coor = 0
 y_coor = 0
 
+#Define Callback for point subscriber
 def callback(data):
     global x_coor, y_coor
     x_coor = data.x
     y_coor = data.y
 
-#type 0 -11
+
 def main():
+
     #initialize node
     rospy.init_node('arm_marker')
+
     #logerr msg to check if node is running
     rospy.logerr("This is just a check for arm_marker node, ignore me")
+
     #define ros frequency
     hz = rospy.Rate(freq)
-    #Marker
+
+    #init marker_pub to publish marker coordinates to topic: visualization_marker
     marker_pub = rospy.Publisher("visualization_marker", Marker, queue_size=10)
     marker = Marker()
     marker.header.stamp=rospy.Time.now()
     marker.header.frame_id= 'robot_base'
+
+    #Init x coordinate sign check var and set to negative
     prev_coor_sign = -1
     
     while not rospy.is_shutdown():
         
+        #Subscribe to Point topic (published by arm_traj node) to get x,y coordinates for marker
         rospy.Subscriber("point", Point, callback)
         
+        #Change marker type when x sign change
         if x_coor>=0:
-            marker.type=1
+            marker.type=1 #cube
         else:
-            marker.type=2
-        new_coor_sign = sign(x_coor)
+            marker.type=2 #sphere
 
+        #check sign of x coordinate
+        new_coor_sign = sign(x_coor)
+        
+        #Change marker color to random if x sign change
         if new_coor_sign != prev_coor_sign:
             #marker.type = randint(1,3)
-            prev_coor_sign = new_coor_sign
-            #marker.color.r=random(1)[0]
-            #marker.color.g=random(1)[0]
-            #marker.color.b=random(1)[0]
+            prev_coor_sign = new_coor_sign #update sign check var
             marker.color = ColorRGBA(random(1)[0],random(1)[0],random(1)[0], 0.8)
-    
+
+        #marker loop: update marker fields and publish to visualization_marker
         marker.id+=1
-        #marker.pose.position.x=x_coor
-        #marker.pose.position.y=y_coor
-        #marker.pose.position.z=0
-        #marker.pose.orientation.x=0
-        #marker.pose.orientation.y=0
-        #marker.pose.orientation.z=0
-        #marker.pose.orientation.w=1
-        #marker.scale.x=0.03
-        #marker.scale.y=0.03
-        #marker.scale.z=0.03
         marker.scale = Vector3(0.03, 0.03, 0.03)
         marker.pose= Pose(position = Point(x_coor,y_coor,0), orientation = Quaternion(0,0,0,1))
         marker.lifetime.secs=2
-        #add new marker
-        
         marker_pub.publish(marker)
-        rospy.loginfo(f"coordinates x:{new_coor_sign} y:{marker.type}")
 
+        #Log coordinates (received from node arm_traj through topic point)
+        rospy.loginfo(f"coordinates x:{x_coor} y:{y_coor}")
+
+        #go to sleep!
         hz.sleep()
 
 if __name__ == "__main__":

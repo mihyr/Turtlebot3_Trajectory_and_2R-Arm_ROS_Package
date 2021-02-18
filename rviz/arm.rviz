@@ -44,7 +44,7 @@ Visualization Manager:
     - Alpha: 0.5
       Cell Size: 1
       Class: rviz/Grid
-      Color: 129; 129; 132
+      Color: 0; 0; 0
       Enabled: true
       Line Style:
         Line Width: 0.029999999329447746
@@ -138,7 +138,7 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 22; 48; 46
+    Background Color: 1; 167; 156
     Default Light: true
     Fixed Frame: robot_base
     Frame Rate: 30

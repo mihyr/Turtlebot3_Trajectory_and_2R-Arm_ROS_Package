@@ -1,9 +1,20 @@
 #!/usr/bin/env python
 
-""" This Node Publishes coordinates for 2 link arm to joint_states
+"""
 
-Publisher:
-    xyz 
+**Info**: This *arm_traj node* publishes velicity message for figure eight trajectory
+
+**Publishers**:
+    point - Publish x and y coordinates of end effector for visualization in rviz
+    joint_states - publish theta1 and theta2 for base_jt and base_to_child jt (calculated from x and y coordinates)
+
+**Parameters**:
+    L1 - length of base link of 2R arm
+    L2 - length of child link of 2R arm
+    Time - Time Period req for one loop (arm tracectory)
+    Pub_Frequency - ROS Publishing freq Rate
+
+**Note**: -
 
 """
 import rospy
@@ -28,34 +39,38 @@ def main():
     rospy.init_node('arm_traj')
     #logerr msg to check if node is running
     rospy.logerr("This is just a check for arm_traj node, ignore me")
+
     #define ros frequency
     hz = rospy.Rate(freq)
-    #initialize time
+
+    #Init time
     time = 0
 
-    #main loop
+    #Init joint_state_publisher        
+    joint_state_publisher = rospy.Publisher("joint_states", JointState, queue_size=10)
+    joint_state = JointState()
+
+    #Init Point_publisher and publish x and y coordinates
+    point_publisher = rospy.Publisher("point", Point, queue_size=10)
+
+    #Iteration loop
     while not rospy.is_shutdown():
         
         #calculate x and y coordinate of end effector
         x_coor, y_coor = xy_coordinates(time, L1, L2, total_time)
         #use calculated x and y  to find theta1 and theta2 of arm links
         theta1, theta2 = joint_angles(x_coor, y_coor,L1,L2)
+
         #log theta1, theta2, time, x_coor, and y_coor to terminal
         rospy.loginfo(f"info message: Time {time}, Theta1:{theta1}, Theta2:{theta2}, x:{x_coor}, y:{y_coor}")
         
-        #init Point_publisher and publish x and y coordinates
-        point_publisher = rospy.Publisher("point", Point, queue_size=10)
-        point_publisher.publish(Point(x_coor,y_coor,0))
+        #point_publisher loop
+        point_publisher.publish(Point(x_coor,y_coor,0)) #Publish x and y coordinates to point topic
 
-        #Init joint_state_publisher        
-        joint_state_publisher = rospy.Publisher("joint_states", JointState, queue_size=10)
-        joint_state = JointState()
-        #joint_state_publisher requires header stamp: current ros time
+        #point_publisher loop
         joint_state.header.stamp = rospy.Time.now()
-        #add name of links in order from parent to child
-        joint_state.name = ['base_jt', 'base_to_child_jt']
-        #publish theta1 and theta2 to joint_states
-        joint_state.position = [theta1, theta2]
+        joint_state.name = ['base_jt', 'base_to_child_jt'] #add name of links in order from parent to child
+        joint_state.position = [theta1, theta2] #publish theta1 and theta2 to joint_states
         joint_state_publisher.publish(joint_state)
 
         #update time and sleep

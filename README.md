@@ -1,4 +1,7 @@
-  
+Use the command below to launch Gazebo and RViz with turtlebot following figure 8 trajectory
+```
+roslaunch homework2 figure_eight.launch gazebo:=true  
+```
 
 Use the command below to launch 2R simulation in RVIZ following a trajectory with markers
 ```

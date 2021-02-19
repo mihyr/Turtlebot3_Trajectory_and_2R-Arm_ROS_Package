@@ -5,7 +5,9 @@
 
 **Publishers**:
     turtle_path - Publish x and y coordinates of turtle to visualize in RViz
+    turtle_point - Publish x and y coordinates of turtle to visualize in RViz
     cmd_vel - publish linear (Vx) and angular (Y) velocity of turtlebot
+    
 
 **Services**:
     pause_turtle - stops turtle until further command (initially robot is in stop state)
@@ -64,6 +66,7 @@ def main():
     
     #init vel_publisher to publish linear and angular vel to topic: cmd_vel
     vel_publisher = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+    #vel_publisher = rospy.Publisher("turtle1/cmd_vel", Twist, queue_size=10)
     velocity=Twist()    
     
     #Calculate quaternion (required for world to odom transformation)
@@ -75,15 +78,23 @@ def main():
     #Broadcast Static transform: World frame to odom frame
     broadcaster = tf2_ros.StaticTransformBroadcaster()
     world2odom_tf = TransformStamped()
+    world2odom_tf.header.seq = 1
     world2odom_tf.header.stamp = rospy.Time.now()
     world2odom_tf.header.frame_id = "world"
     world2odom_tf.child_frame_id = "odom"
     world2odom_tf.transform.translation = Vector3(0,0,0)
     world2odom_tf.transform.rotation = Quaternion(*quaternion)
-    broadcaster.sendTransform(world2odom_tf)
+    #Broadcast Static transform: odom frame to base_footprint frame
+    odon2base_footprint_tf = TransformStamped()
+    odon2base_footprint_tf.header.seq = 1
+    odon2base_footprint_tf.header.stamp = rospy.Time.now()
+    odon2base_footprint_tf.header.frame_id = "odom"
+    odon2base_footprint_tf.child_frame_id = "base_footprint"
+    odon2base_footprint_tf.transform.translation = Vector3(0,0,0)
+    odon2base_footprint_tf.transform.rotation = Quaternion(0,0,0,1)
+    broadcaster.sendTransform([world2odom_tf, odon2base_footprint_tf])
 
-
-    rospy.loginfo(world2odom_tf.transform.rotation)
+    #rospy.loginfo(world2odom_tf.transform.rotation)
     #Now the turtle is oriented towards direction in which figure8 begins. It assumes it to be (0,0,0)
 
     #Define pause_callback and resume_callback for pause and resume services
@@ -120,7 +131,7 @@ def main():
             v_linear, v_angular, theta = xy_derivatives(x_coor,y_coor,H,W,time,T)
 
             #log Data to terminal
-            rospy.loginfo(f"info message: Time {time}, x:{v_linear}, y:{v_angular}")
+            rospy.loginfo(f"info message: Time {time}, x:{x_coor}, y:{y_coor}")
             
             #cmd_vel loop: Update and Publish Velocity
             velocity.linear = Vector3(v_linear,0,0)
@@ -147,6 +158,7 @@ def main():
                 time=0
             else: 
                 time += 1/freq
+            #time += 1/freq
         
         #Just sleep!
         hz.sleep()

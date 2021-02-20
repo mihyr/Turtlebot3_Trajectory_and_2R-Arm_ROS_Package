@@ -21,14 +21,14 @@
   
   <group if="$(arg rviz)">
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"/>
-    <node if="$(arg rqt_odom)" name="rqt_plot" pkg="rqt_plot" type="rqt_plot" args="/odom/pose/pose/position/x:y" />
+    <node if="$(arg rqt_odom)" name="rqt_odom1" pkg="rqt_plot" type="rqt_plot" args="/odom/pose/pose/position/x:y" />
     <!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />-->
   </group>
 
   <group if="$(arg gazebo)">
     <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_empty_world.launch" />
-    <node if="$(arg rqt_odom)" name="rqt_plot" pkg="rqt_plot" type="rqt_plot" args="/odom/pose/pose/position/x:y" />
+    <node if="$(arg rqt_odom)" name="rqt_odom2" pkg="rqt_plot" type="rqt_plot" args="/odom/pose/pose/position/x:y" />
   </group>
 
   <group if="$(arg rqt_calculated)">

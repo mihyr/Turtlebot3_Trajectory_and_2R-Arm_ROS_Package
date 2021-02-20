@@ -79,7 +79,7 @@ def main():
         if new_coor_sign != prev_coor_sign:
             #marker.type = randint(1,3)
             prev_coor_sign = new_coor_sign #update sign check var
-            marker.color = ColorRGBA(random(1)[0],random(1)[0],random(1)[0], 0.8)
+            marker.color = ColorRGBA(random(1)[0],random(1)[0],random(1)[0], 0.9)
 
         #marker loop: update marker fields and publish to visualization_marker
         marker.id+=1

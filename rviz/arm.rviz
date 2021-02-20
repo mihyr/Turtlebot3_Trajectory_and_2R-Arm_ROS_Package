@@ -138,7 +138,7 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 1; 167; 156
+    Background Color: 13; 171; 176
     Default Light: true
     Fixed Frame: robot_base
     Frame Rate: 30

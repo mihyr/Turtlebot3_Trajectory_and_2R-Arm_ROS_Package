@@ -116,4 +116,4 @@ source ~/catkin_ws/devel/setup.zsh
  * Demo: Click on the image below to view video: 2R arm simulation: manual Control
  
     [![Watch the video](https://img.youtube.com/vi/PP-TFPdcaN4/maxresdefault.jpg )](https://youtu.be/PP-TFPdcaN4)
----
+----

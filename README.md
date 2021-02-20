@@ -1,6 +1,5 @@
 # Turtlebot3 Figure-Eight and 2R Arm ROS Package
 ## Overview
----
 
 ### *Turtlebot3 Figure-Eight Trajectory*
 This package makes the turtlebot to follow a figure-8 trajectory (in Gazebo as well as in real world).
@@ -13,7 +12,6 @@ This package makes the turtlebot to follow a figure-8 trajectory (in Gazebo as w
 This package uses RViZ to visualize a Xacro URDF of a Robot arm and making it's end-effector follow a linear trajectory.
 
 ## Dependencies
----
 Title | Link
 ------------ | -------------
 turtlebot3_gazebo| [ROS Wiki](http://wiki.ros.org/turtlebot3_bringup)
@@ -21,7 +19,6 @@ turtlebot3_bringup | [ROS Wiki](http://wiki.ros.org/turtlebot3_bringup)
 
 
 ## Installation Instructions
----
 * Create a catkin workspace
 ```
 mkdir -p ~/catkin_ws/src
@@ -29,7 +26,7 @@ cd ~/catkin_ws/src/
 ```
 * Clone the repo into `catkin_ws/src`
 ```
-git clone https://github.com/IntelRealSense/realsense-ros.git
+git clone https://github.com/ME495-EmbeddedSystems/homework02-whomihirpatel.git
 ```
 * Build the workspace and activate it
 ```
@@ -40,7 +37,6 @@ source ~/catkin_ws/devel/setup.zsh
 ```
 
 ## Usage Instructions
----
 ## *Turtlebot3 Figure-Eight Trajectory*
 * To run the code on actual turtlebot:
     * Launch Roscore on remote PC (your computer)
@@ -83,6 +79,7 @@ source ~/catkin_ws/devel/setup.zsh
 * `rviz:=true ` option to view robot in RVIZ (This applies to both, realworld code as well as gazebo)
 * `rqt_odom:=true ` option to plot odom data from real robot/gazebo in realtime
 * `rqt_calculated:=true` option to plot calculated x,y position in realtime
+*  user may alter `height`, `width`, `time to complete loop` as well as `frequency` parameters for figure-eight, from `config/trajectory.yaml`
 
     Add the above mentioned args to launch file in any combination desired, for eg. command below will launch code on actual robot and load rviz for visualizaion on remote PC as well as plot odom data on rqt_graph
     ```
@@ -90,14 +87,15 @@ source ~/catkin_ws/devel/setup.zsh
     ```
 * Demo: Click on the image below to view video: *Turtlebot3 Following Figure-8 Trajectory: Visualization in GAZEBO*
 
-[![Watch the video](https://img.youtube.com/vi/h6xmesHbBHA/maxresdefault.jpg )](https://youtu.be/h6xmesHbBHA)
+    [![Watch the video](https://img.youtube.com/vi/h6xmesHbBHA/maxresdefault.jpg )](https://youtu.be/h6xmesHbBHA)
 
 * Demo: Click on the image below to view video: *Turtlebot3 Following Figure-8 Trajectory: Visualization in RVIZ*
 
-[![Watch the video](https://img.youtube.com/vi/DA9sDGc_mRw/maxresdefault.jpg )](https://youtu.be/DA9sDGc_mRw)
-* Demo: Click on the image below to view video: *Turtlebot3 Following Figure-8 Trajectory: Real World*
-[![Watch the video](https://img.youtube.com/vi/DA9sDGc_mRw/maxresdefault.jpg )](https://youtu.be/DA9sDGc_mRw)
+    [![Watch the video](https://img.youtube.com/vi/DA9sDGc_mRw/maxresdefault.jpg )](https://youtu.be/DA9sDGc_mRw)
 
+* Demo: Click on the image below to view video: *Turtlebot3 Following Figure-8 Trajectory: Real World*
+    [![Watch the video](https://img.youtube.com/vi/WVT1hkNHyvA/maxresdefault.jpg )](https://youtu.be/WVT1hkNHyvA)
+---
 ## *2R Arm in RVIZ*
 
 * Use the command below to visualize 2R Robot arm in RVIZ following a trajectory with markers
@@ -112,9 +110,10 @@ source ~/catkin_ws/devel/setup.zsh
 
  * Demo: Click on the image below to view video: 2R arm simulation: with marker
 
-[![Watch the video](https://img.youtube.com/vi/mWqHMz_zE3Y/maxresdefault.jpg )](https://youtu.be/mWqHMz_zE3Y)
+    [![Watch the video](https://img.youtube.com/vi/mWqHMz_zE3Y/maxresdefault.jpg )](https://youtu.be/mWqHMz_zE3Y)
 
 
  * Demo: Click on the image below to view video: 2R arm simulation: manual Control
  
-[![Watch the video](https://img.youtube.com/vi/PP-TFPdcaN4/maxresdefault.jpg )](https://youtu.be/PP-TFPdcaN4)
+    [![Watch the video](https://img.youtube.com/vi/PP-TFPdcaN4/maxresdefault.jpg )](https://youtu.be/PP-TFPdcaN4)
+---
